@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const DATA_FILE = path.join(__dirname, "..", "dados_papeis.json");
-const LIMITE_SEMANAL = 300;
+const LIMITE_SEMANAL = 400;
 
 function carregarDados() {
   if (fs.existsSync(DATA_FILE)) {
