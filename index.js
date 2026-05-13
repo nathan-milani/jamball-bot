@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+  intents: [GatewayIntentBits.Guilds],
 });
 
 // Carrega todos os comandos da pasta /commands
@@ -45,4 +45,4 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-client.login(token);
+client.login(process.env.TOKEN);
