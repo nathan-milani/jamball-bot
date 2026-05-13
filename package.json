@@ -1,0 +1,13 @@
+{
+  "name": "bot-papeis",
+  "version": "1.0.0",
+  "description": "Bot Discord para controle de retirada de papéis",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "deploy": "node deploy-commands.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.15.0"
+  }
+}
