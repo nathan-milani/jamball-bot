@@ -4,7 +4,7 @@ const { LIMITE_SEMANAL, carregarDados, inicioSemanaAtual, obterRetirada } = requ
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("consultar")
-    .setDescription("Consulta quantos papéis um membro já retirou na semana")
+    .setDescription("Consulta quantas drogas um membro já retirou na semana")
     .addUserOption(opt =>
       opt.setName("membro").setDescription("O membro a consultar").setRequired(true)
     ),
@@ -31,7 +31,7 @@ module.exports = {
       .addFields(
         { name: "👤 Membro", value: `<@${membro.id}>`, inline: true },
         { name: "📊 Total retirado", value: `${total} / ${LIMITE_SEMANAL}`, inline: true },
-        { name: "📦 Disponível", value: `${restante} papéis`, inline: true },
+        { name: "📦 Disponível", value: `${restante} drogas`, inline: true },
         { name: "📈 Progresso", value: `\`${barra}\` ${total}/${LIMITE_SEMANAL}`, inline: false }
       )
       .setFooter({ text: `Semana iniciada em ${semana}` });

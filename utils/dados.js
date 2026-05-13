@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const DATA_FILE = path.join(__dirname, "..", "dados_papeis.json");
+const DATA_FILE = path.join(__dirname, "..", "dados_drogas.json");
 const LIMITE_SEMANAL = 400;
 
 function carregarDados() {
@@ -17,11 +17,11 @@ function salvarDados(dados) {
 
 function inicioSemanaAtual() {
   const hoje = new Date();
-  const diaSemana = hoje.getDay(); // 0=dom, 1=seg...
-  const diff = (diaSemana === 0 ? -6 : 1) - diaSemana; // ajusta para segunda-feira
+  const diaSemana = hoje.getDay();
+  const diff = (diaSemana === 0 ? -6 : 1) - diaSemana;
   const segunda = new Date(hoje);
   segunda.setDate(hoje.getDate() + diff);
-  return segunda.toISOString().split("T")[0]; // "YYYY-MM-DD"
+  return segunda.toISOString().split("T")[0];
 }
 
 function obterRetirada(dados, membroId, semana) {

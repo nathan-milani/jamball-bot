@@ -23,7 +23,7 @@ module.exports = {
     const linhas = membrosSemana.map(({ uid, total }, i) => {
       const medalha = medalhas[i] ?? `\`${i + 1}.\``;
       const limite = total >= LIMITE_SEMANAL ? " 🔴" : "";
-      return `${medalha} <@${uid}> — ${total}/${LIMITE_SEMANAL} papéis${limite}`;
+      return `${medalha} <@${uid}> — ${total}/${LIMITE_SEMANAL} drogas${limite}`;
     });
 
     const embed = new EmbedBuilder()

@@ -10,12 +10,12 @@ const {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("retirar")
-    .setDescription("Registra a retirada de papéis de um membro")
+    .setDescription("Registra a retirada de drogas de um membro")
     .addUserOption(opt =>
       opt.setName("membro").setDescription("O membro que está retirando").setRequired(true)
     )
     .addIntegerOption(opt =>
-      opt.setName("quantidade").setDescription("Quantidade de papéis").setRequired(true).setMinValue(1)
+      opt.setName("quantidade").setDescription("Quantidade de drogas").setRequired(true).setMinValue(1)
     ),
 
   async execute(interaction) {
@@ -32,7 +32,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setTitle("🚫 Limite já atingido!")
         .setDescription(
-          `<@${membroId}> já retirou **${atual} papéis** esta semana e atingiu o limite máximo de **${LIMITE_SEMANAL} papéis**.\n\nNenhuma retirada foi registrada.`
+          `<@${membroId}> já retirou **${atual} drogas** esta semana e atingiu o limite máximo de **${LIMITE_SEMANAL} drogas**.\n\nNenhuma retirada foi registrada.`
         )
         .setColor(0xe74c3c)
         .setFooter({ text: `Semana iniciada em ${semana}` });
@@ -46,9 +46,9 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setTitle("⚠️ Limite semanal excedido!")
         .setDescription(
-          `<@${membroId}> já retirou **${atual} papéis** esta semana.\n` +
+          `<@${membroId}> já retirou **${atual} drogas** esta semana.\n` +
           `Você tentou registrar mais **${quantidade}**, mas o limite é **${LIMITE_SEMANAL}**.\n\n` +
-          `📦 Máximo disponível ainda: **${disponivel} papéis**.\n\n` +
+          `📦 Máximo disponível ainda: **${disponivel} drogas**.\n\n` +
           `Nenhuma retirada foi registrada. Ajuste a quantidade e tente novamente.`
         )
         .setColor(0xe67e22)
@@ -78,9 +78,9 @@ module.exports = {
       .setColor(cor)
       .addFields(
         { name: "👤 Membro", value: `<@${membroId}>`, inline: true },
-        { name: "📄 Retirado agora", value: `${quantidade} papéis`, inline: true },
+        { name: "💊 Retirado agora", value: `${quantidade} drogas`, inline: true },
         { name: "📊 Total na semana", value: `${totalFinal} / ${LIMITE_SEMANAL}`, inline: true },
-        { name: "📦 Disponível", value: `${restante} papéis`, inline: true },
+        { name: "📦 Disponível", value: `${restante} drogas`, inline: true },
         { name: "📈 Progresso", value: `\`${barra}\` ${totalFinal}/${LIMITE_SEMANAL}`, inline: false }
       )
       .setFooter({ text: `Semana ${semana} • Registrado por ${interaction.user.displayName}` });
