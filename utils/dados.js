@@ -3,6 +3,7 @@ const path = require("path");
 
 const DATA_FILE = path.join(__dirname, "..", "dados_drogas.json");
 const LIMITE_SEMANAL = 400;
+const CHAVE = "atual"; // Chave fixa — só reseta via /resetar
 
 function carregarDados() {
   if (fs.existsSync(DATA_FILE)) {
@@ -15,42 +16,46 @@ function salvarDados(dados) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(dados, null, 2), "utf-8");
 }
 
-function inicioSemanaAtual() {
-  const hoje = new Date();
-  const diaSemana = hoje.getDay();
-  const diff = (diaSemana === 0 ? -6 : 1) - diaSemana;
-  const segunda = new Date(hoje);
-  segunda.setDate(hoje.getDate() + diff);
-  return segunda.toISOString().split("T")[0];
+function obterRetirada(dados, membroId) {
+  return dados?.[membroId]?.[CHAVE] ?? 0;
 }
 
-function obterRetirada(dados, membroId, semana) {
-  return dados?.[membroId]?.[semana] ?? 0;
-}
-
-function registrarRetirada(dados, membroId, semana, quantidade) {
+function registrarRetirada(dados, membroId, quantidade) {
   if (!dados[membroId]) dados[membroId] = {};
-  const atual = dados[membroId][semana] ?? 0;
-  dados[membroId][semana] = atual + quantidade;
+  const atual = dados[membroId][CHAVE] ?? 0;
+  dados[membroId][CHAVE] = atual + quantidade;
   salvarDados(dados);
-  return dados[membroId][semana];
+  return dados[membroId][CHAVE];
 }
 
-function resetarMembro(dados, membroId, semana) {
-  if (dados?.[membroId]?.[semana] !== undefined) {
-    delete dados[membroId][semana];
+function resetarMembro(dados, membroId) {
+  if (dados?.[membroId]?.[CHAVE] !== undefined) {
+    delete dados[membroId][CHAVE];
     salvarDados(dados);
     return true;
   }
   return false;
 }
 
+function resetarTodos(dados) {
+  let contador = 0;
+  for (const membroId of Object.keys(dados)) {
+    if (dados[membroId][CHAVE] !== undefined) {
+      delete dados[membroId][CHAVE];
+      contador++;
+    }
+  }
+  salvarDados(dados);
+  return contador;
+}
+
 module.exports = {
   LIMITE_SEMANAL,
+  CHAVE,
   carregarDados,
   salvarDados,
-  inicioSemanaAtual,
   obterRetirada,
   registrarRetirada,
   resetarMembro,
+  resetarTodos,
 };

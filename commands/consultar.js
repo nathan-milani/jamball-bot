@@ -1,10 +1,10 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { LIMITE_SEMANAL, carregarDados, inicioSemanaAtual, obterRetirada } = require("../utils/dados");
+const { LIMITE_SEMANAL, carregarDados, obterRetirada } = require("../utils/dados");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("consultar")
-    .setDescription("Consulta quantas drogas um membro já retirou na semana")
+    .setDescription("Consulta quantas drogas um membro já retirou")
     .addUserOption(opt =>
       opt.setName("membro").setDescription("O membro a consultar").setRequired(true)
     ),
@@ -12,12 +12,11 @@ module.exports = {
   async execute(interaction) {
     const membro = interaction.options.getUser("membro");
     const dados = carregarDados();
-    const semana = inicioSemanaAtual();
-    const total = obterRetirada(dados, membro.id, semana);
+    const total = obterRetirada(dados, membro.id);
     const restante = LIMITE_SEMANAL - total;
 
     let cor, status;
-    if (total === 0)                        { cor = 0x5865f2; status = "📋 Nenhuma retirada esta semana"; }
+    if (total === 0)                        { cor = 0x5865f2; status = "📋 Nenhuma retirada registrada"; }
     else if (total >= LIMITE_SEMANAL)       { cor = 0xe74c3c; status = "🔴 Limite atingido"; }
     else if (total >= LIMITE_SEMANAL * 0.8) { cor = 0xf1c40f; status = "🟡 Próximo do limite"; }
     else                                    { cor = 0x2ecc71; status = "🟢 Dentro do limite"; }
@@ -33,8 +32,7 @@ module.exports = {
         { name: "📊 Total retirado", value: `${total} / ${LIMITE_SEMANAL}`, inline: true },
         { name: "📦 Disponível", value: `${restante} drogas`, inline: true },
         { name: "📈 Progresso", value: `\`${barra}\` ${total}/${LIMITE_SEMANAL}`, inline: false }
-      )
-      .setFooter({ text: `Semana iniciada em ${semana}` });
+      );
 
     return interaction.reply({ embeds: [embed] });
   },

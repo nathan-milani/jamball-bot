@@ -2,7 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const {
   LIMITE_SEMANAL,
   carregarDados,
-  inicioSemanaAtual,
   obterRetirada,
   registrarRetirada,
 } = require("../utils/dados");
@@ -22,53 +21,41 @@ module.exports = {
     const membro = interaction.options.getUser("membro");
     const quantidade = interaction.options.getInteger("quantidade");
     const dados = carregarDados();
-    const semana = inicioSemanaAtual();
     const membroId = membro.id;
-    const atual = obterRetirada(dados, membroId, semana);
+    const atual = obterRetirada(dados, membroId);
     const novoTotal = atual + quantidade;
 
-    // Já no limite
     if (atual >= LIMITE_SEMANAL) {
       const embed = new EmbedBuilder()
         .setTitle("🚫 Limite já atingido!")
         .setDescription(
-          `<@${membroId}> já retirou **${atual} drogas** esta semana e atingiu o limite máximo de **${LIMITE_SEMANAL} drogas**.\n\nNenhuma retirada foi registrada.`
+          `<@${membroId}> já retirou **${atual} drogas** e atingiu o limite máximo de **${LIMITE_SEMANAL} drogas**.\n\nNenhuma retirada foi registrada.`
         )
-        .setColor(0xe74c3c)
-        .setFooter({ text: `Semana iniciada em ${semana}` });
-
+        .setColor(0xe74c3c);
       return interaction.reply({ embeds: [embed] });
     }
 
-    // Ultrapassaria o limite
     if (novoTotal > LIMITE_SEMANAL) {
       const disponivel = LIMITE_SEMANAL - atual;
       const embed = new EmbedBuilder()
-        .setTitle("⚠️ Limite semanal excedido!")
+        .setTitle("⚠️ Limite excedido!")
         .setDescription(
-          `<@${membroId}> já retirou **${atual} drogas** esta semana.\n` +
+          `<@${membroId}> já retirou **${atual} drogas**.\n` +
           `Você tentou registrar mais **${quantidade}**, mas o limite é **${LIMITE_SEMANAL}**.\n\n` +
           `📦 Máximo disponível ainda: **${disponivel} drogas**.\n\n` +
           `Nenhuma retirada foi registrada. Ajuste a quantidade e tente novamente.`
         )
-        .setColor(0xe67e22)
-        .setFooter({ text: `Semana iniciada em ${semana}` });
-
+        .setColor(0xe67e22);
       return interaction.reply({ embeds: [embed] });
     }
 
-    // Retirada válida
-    const totalFinal = registrarRetirada(dados, membroId, semana, quantidade);
+    const totalFinal = registrarRetirada(dados, membroId, quantidade);
     const restante = LIMITE_SEMANAL - totalFinal;
 
     let cor, status;
-    if (totalFinal === LIMITE_SEMANAL) {
-      cor = 0xe74c3c; status = "🔴 Limite atingido!";
-    } else if (totalFinal >= LIMITE_SEMANAL * 0.8) {
-      cor = 0xf1c40f; status = "🟡 Atenção: próximo do limite";
-    } else {
-      cor = 0x2ecc71; status = "🟢 Retirada registrada";
-    }
+    if (totalFinal === LIMITE_SEMANAL)            { cor = 0xe74c3c; status = "🔴 Limite atingido!"; }
+    else if (totalFinal >= LIMITE_SEMANAL * 0.8)  { cor = 0xf1c40f; status = "🟡 Atenção: próximo do limite"; }
+    else                                           { cor = 0x2ecc71; status = "🟢 Retirada registrada"; }
 
     const blocosCheios = Math.round((totalFinal / LIMITE_SEMANAL) * 10);
     const barra = "█".repeat(blocosCheios) + "░".repeat(10 - blocosCheios);
@@ -79,14 +66,14 @@ module.exports = {
       .addFields(
         { name: "👤 Membro", value: `<@${membroId}>`, inline: true },
         { name: "💊 Retirado agora", value: `${quantidade} drogas`, inline: true },
-        { name: "📊 Total na semana", value: `${totalFinal} / ${LIMITE_SEMANAL}`, inline: true },
+        { name: "📊 Total", value: `${totalFinal} / ${LIMITE_SEMANAL}`, inline: true },
         { name: "📦 Disponível", value: `${restante} drogas`, inline: true },
         { name: "📈 Progresso", value: `\`${barra}\` ${totalFinal}/${LIMITE_SEMANAL}`, inline: false }
       )
-      .setFooter({ text: `Semana ${semana} • Registrado por ${interaction.user.displayName}` });
+      .setFooter({ text: `Registrado por ${interaction.user.displayName}` });
 
     if (totalFinal === LIMITE_SEMANAL) {
-      embed.addFields({ name: "⚠️ Aviso", value: `<@${membroId}> **atingiu o limite máximo** desta semana!`, inline: false });
+      embed.addFields({ name: "⚠️ Aviso", value: `<@${membroId}> **atingiu o limite máximo**!`, inline: false });
     }
 
     return interaction.reply({ embeds: [embed] });
